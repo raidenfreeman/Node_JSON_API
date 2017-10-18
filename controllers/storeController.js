@@ -32,6 +32,20 @@ exports.createStore = async(req, res) => {
     res.redirect(`/store/${store.slug}`);
 }
 
+exports.getStoreBySlug = async(req, res, next) => {
+    const store = await Store.findOne({
+        slug: req.params.slug
+    });
+    if (store) {
+        res.render('displayStore', {
+            title: store.name,
+            store
+        });
+    } else {
+        return next();
+    }
+}
+
 exports.updateStore = async(req, res) => {
     const updatedStore = await Store.findOneAndUpdate({
         _id: req.params.id
@@ -39,7 +53,8 @@ exports.updateStore = async(req, res) => {
         new: true,
         runValidators: true
     }).exec();
-    req.flash('success', `Updated ${updatedStore.name} successfully! <a href="/stores/${updatedStore.slug}">View Store</a>`);
+    req.flash('success', `Updated ${updatedStore.name} successfully!
+    <a href="/stores/${updatedStore.slug}">View Store</a>`);
     res.redirect(`/stores/${updatedStore._id}/edit`);
 }
 
