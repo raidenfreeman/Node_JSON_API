@@ -34,10 +34,30 @@ storeSchema.pre('save', async function (next) {
     // If there's more than 0
     if (storesWithSlug.length) {
         // Add +1 to the number of stores, and append it to the slug
-        this.slug = `${this.slug}-${storesWithSlug.length+1}`; 
+        this.slug = `${this.slug}-${storesWithSlug.length+1}`;
     }
 
     next();
 });
+
+storeSchema.statics.getTagsList = function (tags) {
+    return this.aggregate([{
+            $unwind: '$tags'
+        },
+        {
+            $group: {
+                _id: '$tags',
+                count: {
+                    $sum: 1
+                }
+            }
+        },
+        {
+            $sort: {
+                count: -1
+            }
+        }
+    ]);
+}
 
 module.exports = mongoose.model('Store', storeSchema);

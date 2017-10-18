@@ -80,3 +80,15 @@ exports.editStore = async(req, res) => {
         store
     });
 }
+
+
+exports.getStoresByTag = async(req, res, next) => {
+
+    const tags = await Store.getTagsList();
+    const tag = req.params.tag;
+    res.render('tags', {
+        tags,
+        title: 'Tags',
+        tag
+    });
+}
